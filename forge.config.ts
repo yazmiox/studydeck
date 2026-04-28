@@ -11,7 +11,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'src/icon',
-    name: 'Progress Tracker',
+    name: 'StudyDeck',
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({ setupIcon: 'src/icon.ico', }), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
@@ -56,8 +56,8 @@ const config: ForgeConfig = {
       name: '@electron-forge/publisher-github',
       config: {
         repository: {
-          owner: 'Yasin Ahmed',
-          name: 'progress-tracker'
+          owner: 'yazmiox',
+          name: 'studydeck'
         },
         prerelease: true
       }

@@ -1,159 +1,244 @@
 import { createContext, useContext, useEffect, useReducer, useState } from "react";
+import type { AppState, Action, Course } from "../types";
 
-export interface Subject {
-    id: string
-    name: string
-    chapters: Chapter[]
+interface AppContextType {
+    state: AppState;
+    dispatch: React.Dispatch<Action>;
 }
 
-interface Chapter {
-    id: string
-    name: string
-    completed: boolean
+const defaultState: AppState = {
+    courses: [],
+    isDarkMode: false,
+    telemetryConsent: null,
+    schemaVersion: 2
+};
+
+const AppContext = createContext<AppContextType | null>(null);
+
+function appReducer(state: AppState, action: Action): AppState {
+    switch (action.type) {
+        case 'LOAD_STATE':
+            return { ...defaultState, ...action.payload };
+
+        case 'SET_DARK_MODE':
+            return { ...state, isDarkMode: action.payload };
+
+        case 'SET_TELEMETRY_CONSENT':
+            return { ...state, telemetryConsent: action.payload };
+
+        case 'ADD_COURSE':
+            return { ...state, courses: [...state.courses, action.payload] };
+
+        case 'UPDATE_COURSE':
+            return {
+                ...state,
+                courses: state.courses.map(course =>
+                    course.id === action.payload.courseId
+                        ? { ...course, ...action.payload.updates }
+                        : course
+                )
+            };
+
+        case 'DELETE_COURSE':
+            return {
+                ...state,
+                courses: state.courses.filter(course => course.id !== action.payload)
+            };
+
+        case 'REORDER_COURSES':
+            return { ...state, courses: action.payload };
+
+        case 'ADD_LECTURE':
+            return {
+                ...state,
+                courses: state.courses.map(course =>
+                    course.id === action.payload.courseId
+                        ? { ...course, lectures: [...course.lectures, action.payload.lecture] }
+                        : course
+                )
+            };
+
+        case 'UPDATE_LECTURE':
+            return {
+                ...state,
+                courses: state.courses.map(course =>
+                    course.id === action.payload.courseId
+                        ? {
+                            ...course,
+                            lectures: course.lectures.map(lecture =>
+                                lecture.id === action.payload.lectureId
+                                    ? { ...lecture, ...action.payload.updates }
+                                    : lecture
+                            )
+                        }
+                        : course
+                )
+            };
+
+        case 'DELETE_LECTURE':
+            return {
+                ...state,
+                courses: state.courses.map(course =>
+                    course.id === action.payload.courseId
+                        ? {
+                            ...course,
+                            lectures: course.lectures.filter(l => l.id !== action.payload.lectureId)
+                        }
+                        : course
+                )
+            };
+
+        case 'REORDER_LECTURES':
+            return {
+                ...state,
+                courses: state.courses.map(course =>
+                    course.id === action.payload.courseId
+                        ? { ...course, lectures: action.payload.lectures }
+                        : course
+                )
+            };
+
+        case 'ADD_EXAM':
+            return {
+                ...state,
+                courses: state.courses.map(course =>
+                    course.id === action.payload.courseId
+                        ? { ...course, exams: [...course.exams, action.payload] }
+                        : course
+                )
+            };
+
+        case 'UPDATE_EXAM':
+            return {
+                ...state,
+                courses: state.courses.map(course => ({
+                    ...course,
+                    exams: course.exams.map(exam =>
+                        exam.id === action.payload.examId
+                            ? { ...exam, ...action.payload.updates }
+                            : exam
+                    )
+                }))
+            };
+
+        case 'DELETE_EXAM':
+            return {
+                ...state,
+                courses: state.courses.map(course => ({
+                    ...course,
+                    exams: course.exams.filter(exam => {
+                        if (typeof action.payload === 'string') {
+                            return exam.id !== action.payload;
+                        }
+                        return exam.id !== (action.payload as any).examId;
+                    })
+                }))
+            };
+
+        case 'ADD_ATTACHMENT':
+            return {
+                ...state,
+                courses: state.courses.map(course =>
+                    course.id === action.payload.courseId
+                        ? {
+                            ...course,
+                            lectures: course.lectures.map(lecture =>
+                                lecture.id === action.payload.lectureId
+                                    ? { ...lecture, attachments: [...lecture.attachments, action.payload.attachment] }
+                                    : lecture
+                            )
+                        }
+                        : course
+                )
+            };
+
+        case 'DELETE_ATTACHMENT':
+            return {
+                ...state,
+                courses: state.courses.map(course =>
+                    course.id === action.payload.courseId
+                        ? {
+                            ...course,
+                            lectures: course.lectures.map(lecture =>
+                                lecture.id === action.payload.lectureId
+                                    ? {
+                                        ...lecture,
+                                        attachments: lecture.attachments.filter(a => a.id !== action.payload.attachmentId)
+                                    }
+                                    : lecture
+                            )
+                        }
+                        : course
+                )
+            };
+
+        default:
+            return state;
+    }
 }
 
-type Action =
-    {
-        type: 'LOAD_SUBJECTS'
-        payload: Subject[]
-    }
-    | {
-        type: 'ADD_SUBJECT'
-        payload: Subject
-    } | {
-        type: 'UPDATE_SUBJECT'
-        payload: { subjectId: string, updates: Partial<Subject> }
-    } | {
-        type: 'DELETE_SUBJECT'
-        payload: { id: string }
-    } | {
-        type: 'ADD_CHAPTER'
-        payload: { subjectId: string, chapterInfo: Chapter }
-    } | {
-        type: 'UPDATE_CHAPTER'
-        payload: { subjectId: string, chapterId: string, updates: Partial<Chapter> }
-    } | {
-        type: 'DELETE_CHAPTER'
-        payload: { subjectId: string, chapterId: string }
-    }
+export function AppContextProvider({ children }: { children: React.ReactNode }) {
+    const [state, dispatch] = useReducer(appReducer, defaultState);
+    const [isLoaded, setIsLoaded] = useState(false);
 
-const AppContext = createContext<{
-    subjects: Subject[],
-    totalProgress: number,
-    dispatch: React.Dispatch<Action>,
-    deadline: string | null,
-    setDeadline: React.Dispatch<React.SetStateAction<string | null>>
-    isDarkMode: boolean,
-    setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>
-}>({ subjects: [], totalProgress: 0, dispatch: () => { }, deadline: null, setDeadline: () => { }, isDarkMode: false, setIsDarkMode: () => { } })
-
-export default function AppContextProvider({ children }: { children: React.ReactNode }) {
-    const [subjects, dispatch] = useReducer(contextReducer, [])
-    const [deadline, setDeadline] = useState<string | null>(null)
-    const [isDarkMode, setIsDarkMode] = useState(false)
-    const [totalProgress, setTotalProgress] = useState(0)
-    const [isLoadingApplicationState, setIsLoadingApplicationState] = useState(true)
-
+    // Initial Load & Migration
     useEffect(() => {
-        // Loading application state
         (async () => {
-            const applicationState = await window.electronAPI.getApplicationState()
-            if (applicationState) {
-                dispatch({ type: 'LOAD_SUBJECTS', payload: applicationState.subjects })
-                setTotalProgress(applicationState.totalProgress)
-                setDeadline(applicationState.deadline)
-                setIsDarkMode(applicationState.isDarkMode)
-                document.querySelector('html').classList.toggle('dark', applicationState.isDarkMode)
+            try {
+                const rawState = await window.electronAPI.getApplicationState();
+                const loadedState = (rawState && rawState.schemaVersion === 2) ? rawState : defaultState;
+
+                dispatch({ type: 'LOAD_STATE', payload: loadedState });
+
+                // Set initial dark mode DOM
+                const html = document.querySelector('html');
+                if (html) {
+                    html.classList.toggle('dark', loadedState.isDarkMode);
+                }
+            } catch (error) {
+                console.error("Failed to load state", error);
+            } finally {
+                setIsLoaded(true);
             }
-            setIsLoadingApplicationState(false)
-        })()
-    }, [])
+        })();
+    }, []);
 
+    // Toggle Dark Mode globally
     useEffect(() => {
-        if (!isLoadingApplicationState) {
-            const totalChapters = subjects.reduce((sum, subject) => sum + subject.chapters.length, 0);
-            const completedChapters = subjects.reduce(
-                (sum, subject) => sum + subject.chapters.filter((chapter) => chapter.completed).length,
-                0
-            );
-            const overallProgress = Math.round((completedChapters / totalChapters) * 100) || 0;
-            setTotalProgress(overallProgress)
-            console.log({ subjects, totalProgress: overallProgress, deadline, isDarkMode })
-            window.electronAPI.saveApplicationState({ subjects, totalProgress: overallProgress, deadline, isDarkMode })
+        if (!isLoaded) return;
+        const html = document.querySelector('html');
+        if (html) {
+            html.classList.toggle('dark', state.isDarkMode);
         }
-    }, [subjects, deadline, isDarkMode])
+    }, [state.isDarkMode, isLoaded]);
 
-    return isLoadingApplicationState ? null :
-        <AppContext.Provider value={{ subjects, dispatch, totalProgress, deadline, setDeadline, isDarkMode, setIsDarkMode }}>
+    // Debounced Persistence
+    useEffect(() => {
+        if (!isLoaded) return;
+
+        const timeoutId = setTimeout(() => {
+            window.electronAPI.saveApplicationState(state);
+        }, 500); // 500ms debounce
+
+        return () => clearTimeout(timeoutId);
+    }, [state, isLoaded]);
+
+    if (!isLoaded) {
+        // Simple loading placeholder
+        return <div className="h-screen w-full flex items-center justify-center bg-white dark:bg-black text-black dark:text-white">Loading...</div>;
+    }
+
+    return (
+        <AppContext.Provider value={{ state, dispatch }}>
             {children}
         </AppContext.Provider>
+    );
 }
 
 export const useAppContext = () => {
-    if (!AppContext) {
-        throw new Error('AppContext cannot be null')
+    const context = useContext(AppContext);
+    if (!context) {
+        throw new Error('useAppContext must be used within an AppContextProvider');
     }
-    return useContext(AppContext)
-}
-
-const contextReducer = (subjects: Subject[], action: Action) => {
-    switch (action.type) {
-        case 'LOAD_SUBJECTS': {
-            return action.payload
-        }
-        case 'ADD_SUBJECT': {
-            return [...subjects, action.payload]
-        }
-        case 'UPDATE_SUBJECT': {
-            return subjects.map((subject) => {
-                if (subject.id === action.payload.subjectId) {
-                    return { ...subject, ...action.payload.updates }
-                }
-                return subject
-            })
-        }
-        case 'DELETE_SUBJECT': {
-            return subjects.filter((subject) => subject.id !== action.payload.id)
-        }
-        case 'ADD_CHAPTER': {
-            return subjects.map(subject => {
-                if (subject.id === action.payload.subjectId) {
-                    return {
-                        ...subject,
-                        chapters: [...subject.chapters, action.payload.chapterInfo]
-                    }
-                }
-                return subject
-            })
-        }
-        case 'UPDATE_CHAPTER': {
-            return subjects.map(subject => {
-                if (subject.id === action.payload.subjectId) {
-                    return {
-                        ...subject,
-                        chapters: subject.chapters.map(chapter => {
-                            if (chapter.id === action.payload.chapterId) {
-                                return { ...chapter, ...action.payload.updates }
-                            }
-                            return chapter
-                        })
-                    }
-                }
-                return subject
-            })
-        }
-        case 'DELETE_CHAPTER': {
-            return subjects.map(subject => {
-                if (subject.id === action.payload.subjectId) {
-                    return {
-                        ...subject,
-                        chapters: subject.chapters.filter(chapter => chapter.id !== action.payload.chapterId)
-                    }
-                }
-                return subject
-            })
-        }
-        default:
-            throw new Error('Invalid action type')
-    }
-}
+    return context;
+};
