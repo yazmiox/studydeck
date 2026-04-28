@@ -9,6 +9,7 @@ import { CircularProgress } from "../../ui/circular-progress";
 import { Button } from "../../ui/button";
 import { format, differenceInDays, differenceInSeconds, isFuture, parseISO } from "date-fns";
 import { Exam } from "../../../types";
+import { useConfirm } from "../../../hooks/useConfirm";
 
 interface DashboardProps {
     onAddCourse: () => void;
@@ -20,6 +21,7 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
     const { state, dispatch } = useAppContext();
     const { courses } = state;
     const overallProgress = useTotalProgress(courses);
+    const { confirm, ConfirmDialog } = useConfirm();
 
     const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -257,8 +259,8 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
                                                 variant="ghost" 
                                                 size="icon" 
                                                 className="h-7 w-7 text-destructive hover:bg-destructive/10" 
-                                                onClick={() => {
-                                                    if (window.confirm(`Delete exam "${exam.name}"?`)) {
+                                                onClick={async () => {
+                                                    if (await confirm(`Delete exam "${exam.name}"?`, "Delete Exam")) {
                                                         dispatch({ type: 'DELETE_EXAM', payload: { courseId: exam.courseId, examId: exam.id } });
                                                     }
                                                 }}
@@ -277,6 +279,7 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
                     </div>
                 </div>
             </div>
+            <ConfirmDialog />
         </div>
     );
 }

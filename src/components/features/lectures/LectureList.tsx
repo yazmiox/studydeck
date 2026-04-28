@@ -9,6 +9,7 @@ import { Button } from "../../ui/button";
 import { Plus } from "lucide-react";
 import { useKeyboardShortcuts } from "../../../hooks/useKeyboardShortcuts";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
+import { useConfirm } from "../../../hooks/useConfirm";
 
 interface LectureListProps {
     course: Course;
@@ -19,6 +20,7 @@ export function LectureList({ course }: LectureListProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingLecture, setEditingLecture] = useState<Lecture | null>(null);
     const [activeId, setActiveId] = useState<string | null>(null);
+    const { confirm, ConfirmDialog } = useConfirm();
 
     useKeyboardShortcuts({
         'ctrl+l': () => {
@@ -99,8 +101,8 @@ export function LectureList({ course }: LectureListProps) {
         });
     };
 
-    const handleDelete = (lectureId: string) => {
-        if (window.confirm("Are you sure you want to delete this lecture?")) {
+    const handleDelete = async (lectureId: string) => {
+        if (await confirm("Are you sure you want to delete this lecture?", "Delete Lecture")) {
             dispatch({
                 type: 'DELETE_LECTURE',
                 payload: { courseId: course.id, lectureId }
@@ -168,6 +170,7 @@ export function LectureList({ course }: LectureListProps) {
                 onSave={handleSaveLecture}
                 initialName={editingLecture?.name}
             />
+            <ConfirmDialog />
         </div>
     );
 }

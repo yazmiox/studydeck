@@ -3,6 +3,7 @@ import { Button } from "../../ui/button";
 import { Moon, Sun, Download, Upload, Info } from "lucide-react";
 import { useAppContext } from "../../../context/AppContext";
 import { APP_CONFIG } from "../../../constants";
+import { useConfirm } from "../../../hooks/useConfirm";
 
 interface SettingsDialogProps {
     open: boolean;
@@ -11,6 +12,7 @@ interface SettingsDialogProps {
 
 export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
     const { state, dispatch } = useAppContext();
+    const { confirm, ConfirmDialog } = useConfirm();
 
     const handleExport = async () => {
         const dataStr = JSON.stringify(state, null, 2);
@@ -28,13 +30,13 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
 
                 // Case 1: Full Backup (contains 'courses' array)
                 if (parsed.courses && Array.isArray(parsed.courses)) {
-                    if (window.confirm("This will overwrite your current data with the full backup. Proceed?")) {
+                    if (await confirm("This will overwrite your current data with the full backup. Proceed?", "Import Full Backup")) {
                         dispatch({ type: 'LOAD_STATE', payload: parsed });
                     }
                 }
                 // Case 2: Single Course (contains 'name' and 'lectures' array)
                 else if (parsed.name && Array.isArray(parsed.lectures)) {
-                    if (window.confirm(`Found course "${parsed.name}". Add it to your current courses?`)) {
+                    if (await confirm(`Found course "${parsed.name}". Add it to your current courses?`, "Import Course")) {
                         const newCourse = {
                             ...parsed,
                             id: crypto.randomUUID() // Assign new unique ID to avoid duplicates
@@ -43,10 +45,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                     }
                 }
                 else {
-                    alert(`Invalid file format. This doesn't seem to be a ${APP_CONFIG.name} backup or a course export.`);
+                    await confirm(`Invalid file format. This doesn't seem to be a ${APP_CONFIG.name} backup or a course export.`, "Invalid File");
                 }
             } catch (err) {
-                alert("Failed to parse JSON file.");
+                await confirm("Failed to parse JSON file. It might be corrupted.", "Import Error");
             }
         }
     };
@@ -132,6 +134,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                     </div>
                 </div>
             </DialogContent>
+            <ConfirmDialog />
         </Dialog>
     );
 }

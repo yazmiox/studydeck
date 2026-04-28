@@ -2,6 +2,7 @@ import { Paperclip, Plus, Trash2, ExternalLink } from "lucide-react";
 import { Attachment } from "../../../types";
 import { Button } from "../../ui/button";
 import { useAppContext } from "../../../context/AppContext";
+import { useConfirm } from "../../../hooks/useConfirm";
 
 interface LectureAttachmentsProps {
     courseId: string;
@@ -11,6 +12,7 @@ interface LectureAttachmentsProps {
 
 export function LectureAttachments({ courseId, lectureId, attachments }: LectureAttachmentsProps) {
     const { dispatch } = useAppContext();
+    const { confirm, ConfirmDialog } = useConfirm();
 
     const handleAddFiles = async () => {
         const files = await window.electronAPI.openFileDialog();
@@ -38,8 +40,8 @@ export function LectureAttachments({ courseId, lectureId, attachments }: Lecture
         window.electronAPI.openFile(path);
     };
 
-    const handleDelete = (attachmentId: string) => {
-        if (window.confirm("Are you sure you want to remove this attachment?")) {
+    const handleDelete = async (attachmentId: string) => {
+        if (await confirm("Are you sure you want to remove this attachment?", "Remove Attachment")) {
             dispatch({
                 type: 'DELETE_ATTACHMENT',
                 payload: { courseId, lectureId, attachmentId }
@@ -87,6 +89,7 @@ export function LectureAttachments({ courseId, lectureId, attachments }: Lecture
                     ))}
                 </div>
             )}
+            <ConfirmDialog />
         </div>
     );
 }

@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useAppContext } from "../context/AppContext";
+import { APP_CONFIG } from "@/constants";
 
 export function useTelemetry() {
     const { state } = useAppContext();
@@ -10,7 +11,7 @@ export function useTelemetry() {
             // @ts-ignore
             window.electronAPI.trackEvent(name, {
                 ...props,
-                version: "2.0.0", // Hardcoded or from config
+                version: APP_CONFIG.version,
                 isDarkMode: state.isDarkMode
             });
         }

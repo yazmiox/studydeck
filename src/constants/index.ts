@@ -14,7 +14,7 @@ export const STATUS_LABELS = {
 
 export const APP_CONFIG = {
     name: "StudyDeck",
-    version: "2.0.0",
+    version: "2.0.1",
     author: "Yasin Ahmed",
     githubUrl: "https://github.com/yazmiox",
     repoUrl: "https://github.com/yazmiox/studydeck",

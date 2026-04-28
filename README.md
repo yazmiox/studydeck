@@ -46,6 +46,10 @@ Download the latest **StudyDeck Setup.exe** from the [Releases page](https://git
 
 Just run the installer — no configuration needed. The app will auto-update in the background when new versions are available.
 
+> ⚠️ **Note for Windows Users:** Because this is an indie app from a student developer, it isn't "digitally signed" with an expensive certificate. When you first run the installer, Windows Defender SmartScreen will show a blue warning saying "Windows protected your PC." 
+> 
+> Simply click **More info** -> then click **Run anyway**. It's completely safe!
+
 ### Linux
 Coming Soon...
 

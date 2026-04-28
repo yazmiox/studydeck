@@ -13,6 +13,7 @@ import { Button } from "../../ui/button";
 import { Progress } from "../../ui/progress";
 import { useAppContext } from "../../../context/AppContext";
 import { APP_CONFIG } from "@/constants";
+import { useConfirm } from "@/hooks/useConfirm";
 
 interface CourseCardProps {
     course: Course;
@@ -25,9 +26,11 @@ export function CourseCard({ course, isSelected, onClick, onEdit }: CourseCardPr
     const progress = useCourseProgress(course.lectures);
     const { dispatch } = useAppContext();
 
-    const handleDelete = (e: React.MouseEvent) => {
+    const { confirm, ConfirmDialog } = useConfirm();
+
+    const handleDelete = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (window.confirm(`Are you sure you want to delete ${course.name}?`)) {
+        if (await confirm(`Are you sure you want to delete ${course.name}?`, "Delete Course")) {
             dispatch({ type: 'DELETE_COURSE', payload: course.id });
         }
     };
@@ -97,6 +100,7 @@ export function CourseCard({ course, isSelected, onClick, onEdit }: CourseCardPr
                     {progress}%
                 </span>
             </div>
+            <ConfirmDialog />
         </div>
     );
 }
