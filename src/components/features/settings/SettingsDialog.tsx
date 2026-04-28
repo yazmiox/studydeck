@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
 import { Button } from "../../ui/button";
+import { Switch } from "../../ui/switch";
 import { Moon, Sun, Download, Upload, Info } from "lucide-react";
 import { useAppContext } from "../../../context/AppContext";
 import { APP_CONFIG } from "../../../constants";
@@ -85,6 +86,20 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                                 <Download className="w-4 h-4 mr-2" /> Import Data
                             </Button>
                             <p className="text-xs text-muted-foreground mt-1">Importing will overwrite your current progress.</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Privacy</h4>
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <span className="text-sm font-medium">Share usage data</span>
+                                <p className="text-xs text-muted-foreground">Helps improve the app anonymously.</p>
+                            </div>
+                            <Switch
+                                checked={state.telemetryConsent === true}
+                                onCheckedChange={(checked) => dispatch({ type: 'SET_TELEMETRY_CONSENT', payload: checked })}
+                            />
                         </div>
                     </div>
 

@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../ui/dialog";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import { Calendar } from "../../ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import { format, parseISO } from "date-fns";
+import { cn } from "../../../lib/utils";
 import { useAppContext } from "../../../context/AppContext";
 import { Exam } from "../../../types";
 
@@ -100,23 +105,40 @@ export function ExamDialog({ open, onOpenChange, onSave, initialData }: ExamDial
                         />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
+                        <div className="space-y-2 flex flex-col">
                             <label htmlFor="examDate" className="text-sm font-medium">Exam Date</label>
-                            <Input
-                                id="examDate"
-                                type="date"
-                                value={date}
-                                onChange={e => setDate(e.target.value)}
-                                required
-                            />
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full justify-start text-left font-normal",
+                                            !date && "text-muted-foreground"
+                                        )}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {date ? format(parseISO(date), "PPP") : <span>Pick a date</span>}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                        mode="single"
+                                        selected={date ? parseISO(date) : undefined}
+                                        onSelect={(d) => setDate(d ? format(d, "yyyy-MM-dd") : "")}
+                                        initialFocus
+                                        fixedWeeks
+                                    />
+                                </PopoverContent>
+                            </Popover>
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 flex flex-col">
                             <label htmlFor="examTime" className="text-sm font-medium">Time (Optional)</label>
                             <Input
                                 id="examTime"
                                 type="time"
                                 value={time}
                                 onChange={e => setTime(e.target.value)}
+                                className="w-full font-normal"
                             />
                         </div>
                     </div>

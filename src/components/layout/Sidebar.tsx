@@ -88,7 +88,7 @@ export function Sidebar({ selectedCourseId, onSelectCourse, onAddCourse, onEditC
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-primary" asChild>
-                                            <a href={APP_CONFIG.githubUrl} target="_blank" rel="noreferrer">
+                                            <a href={APP_CONFIG.sourceCodeUrl} target="_blank" rel="noreferrer">
                                                 <Code className="w-3.5 h-3.5" />
                                             </a>
                                         </Button>
