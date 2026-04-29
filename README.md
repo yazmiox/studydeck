@@ -51,20 +51,27 @@ Just run the installer — no configuration needed. The app will auto-update in 
 > Simply click **More info** -> then click **Run anyway**. It's completely safe!
 
 ### Linux
-Coming Soon...
+Download the `.deb` (Debian/Ubuntu) or `.rpm` (Fedora/RHEL) package from [Releases](https://github.com/yazmiox/studydeck/releases).
 
 ### macOS
-Bhairee ami gorib... tai mac nai and build and test korte pari nai. But, mac binary is coming soon... (Insta reel dekhe smy thakle👍)
+Download the `.dmg` or `.zip` from [Releases](https://github.com/yazmiox/studydeck/releases) and drag the app into your Applications folder.
 
+> ⚠️ **Note for Mac Users:** Because this app is independently developed, it isn't notarized by Apple's $99/year developer program. When you try to open it the first time, macOS will show a scary warning saying the app is damaged or from an unidentified developer.
+> 
+> **To open it:**
+> 1. Open your **Applications** folder in Finder.
+> 2. **Right-click** (or Control-click) the StudyDeck app.
+> 3. Click **Open** from the menu.
+> 4. In the warning box that pops up, click **Open** again. You will only have to do this once!
 ---
 
 ## ⌨️ Keyboard Shortcuts
 
-| Shortcut | Action |
-|---|---|
-| `Ctrl + K` | Open Global Search |
-| `Ctrl + N` | Add New Course |
-| `Ctrl + L` | Add New Lecture |
+| Shortcut (Windows/Linux) | Shortcut (Mac) | Action |
+|---|---|---|
+| `Ctrl + K` | `Cmd ⌘ + K` | Open Global Search |
+| `Ctrl + N` | `Cmd ⌘ + N` | Add New Course |
+| `Ctrl + L` | `Cmd ⌘ + L` | Add New Lecture |
 
 ---
 
