@@ -23,7 +23,7 @@ try {
 if (app.isPackaged) {
   updateElectronApp({
     repo: 'yazmiox/studydeck',
-    updateInterval: '5 minutes'
+    updateInterval: '1 hour'
   });
 
   autoUpdater.on('update-available', () => {
