@@ -1,7 +1,7 @@
 {
   "name": "studydeck",
   "productName": "StudyDeck",
-  "version": "2.0.5",
+  "version": "2.1.5",
   "description": "An application to track your study progress.",
   "main": ".vite/build/main.js",
   "scripts": {

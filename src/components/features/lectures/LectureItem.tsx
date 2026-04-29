@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Paperclip, FileText, ChevronDown, ChevronRight, MoreVertical, Trash, Edit } from "lucide-react";
+import { GripVertical, Paperclip, FileText, ChevronDown, ChevronRight, MoreVertical, Trash, Edit, Globe } from "lucide-react";
 import { Lecture } from "../../../types";
 import { cn } from "../../../lib/utils";
 import { STATUS_COLORS, STATUS_LABELS } from "../../../constants";
@@ -10,6 +10,7 @@ import { Badge } from "../../ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "../../ui/dropdown-menu";
 import { LectureNotes } from "./LectureNotes";
 import { LectureAttachments } from "./LectureAttachments";
+import { LectureLinks } from "./LectureLinks";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
 
 interface LectureItemProps {
@@ -89,6 +90,12 @@ export function LectureItem({ courseId, lecture, onEdit, onDelete, onChangeStatu
                             <FileText className="w-3 h-3" />
                         </Badge>
                     )}
+                    {(lecture.links?.length > 0) && (
+                        <Badge variant="secondary" className="px-1.5 py-0 h-5 text-[10px] gap-1 opacity-80 cursor-pointer">
+                            <Globe className="w-3 h-3" />
+                            {lecture.links.length}
+                        </Badge>
+                    )}
                 </div>
 
                 <DropdownMenu>
@@ -116,6 +123,7 @@ export function LectureItem({ courseId, lecture, onEdit, onDelete, onChangeStatu
                 <div className="p-4 pt-0 border-t bg-muted/10 flex flex-col gap-4 overflow-hidden">
                     <LectureNotes courseId={courseId} lectureId={lecture.id} initialNotes={lecture.notes} />
                     <LectureAttachments courseId={courseId} lectureId={lecture.id} attachments={lecture.attachments} />
+                    <LectureLinks courseId={courseId} lectureId={lecture.id} links={lecture.links || []} />
                 </div>
             )}
         </div>

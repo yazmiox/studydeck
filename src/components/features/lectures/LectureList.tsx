@@ -84,6 +84,7 @@ export function LectureList({ course }: LectureListProps) {
                 status: 'not_started',
                 notes: '',
                 attachments: [],
+                links: [],
                 order: course.lectures.length,
                 createdAt: new Date().toISOString()
             };

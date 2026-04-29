@@ -13,5 +13,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
     importData: () => ipcRenderer.invoke('import-data'),
     
     trackEvent: (name: string, props?: any) => ipcRenderer.invoke('track-event', name, props),
-    checkForUpdates: () => ipcRenderer.invoke('check-for-updates')
+    checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+    openLink: (url: string) => ipcRenderer.invoke('open-link', url)
 });

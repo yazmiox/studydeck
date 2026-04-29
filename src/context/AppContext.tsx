@@ -172,6 +172,43 @@ function appReducer(state: AppState, action: Action): AppState {
                 )
             };
 
+        case 'ADD_LINK':
+            return {
+                ...state,
+                courses: state.courses.map(course =>
+                    course.id === action.payload.courseId
+                        ? {
+                            ...course,
+                            lectures: course.lectures.map(lecture =>
+                                lecture.id === action.payload.lectureId
+                                    ? { ...lecture, links: [...(lecture.links || []), action.payload.link] }
+                                    : lecture
+                            )
+                        }
+                        : course
+                )
+            };
+
+        case 'DELETE_LINK':
+            return {
+                ...state,
+                courses: state.courses.map(course =>
+                    course.id === action.payload.courseId
+                        ? {
+                            ...course,
+                            lectures: course.lectures.map(lecture =>
+                                lecture.id === action.payload.lectureId
+                                    ? {
+                                        ...lecture,
+                                        links: (lecture.links || []).filter(l => l.id !== action.payload.linkId)
+                                    }
+                                    : lecture
+                            )
+                        }
+                        : course
+                )
+            };
+
         default:
             return state;
     }

@@ -8,12 +8,20 @@ export interface Attachment {
     addedAt: string;
 }
 
+export interface Link {
+    id: string;
+    name: string;
+    url: string;
+    addedAt: string;
+}
+
 export interface Lecture {
     id: string;
     name: string;
     status: LectureStatus;
     notes: string;
     attachments: Attachment[];
+    links: Link[];
     order: number;
     createdAt: string;
 }
@@ -60,4 +68,6 @@ export type Action =
     | { type: 'UPDATE_EXAM'; payload: { examId: string; updates: Partial<Exam> } }
     | { type: 'DELETE_EXAM'; payload: string }
     | { type: 'ADD_ATTACHMENT'; payload: { courseId: string; lectureId: string; attachment: Attachment } }
-    | { type: 'DELETE_ATTACHMENT'; payload: { courseId: string; lectureId: string; attachmentId: string } };
+    | { type: 'DELETE_ATTACHMENT'; payload: { courseId: string; lectureId: string; attachmentId: string } }
+    | { type: 'ADD_LINK'; payload: { courseId: string; lectureId: string; link: Link } }
+    | { type: 'DELETE_LINK'; payload: { courseId: string; lectureId: string; linkId: string } };

@@ -89,6 +89,12 @@ const createWindow = () => {
     mainWindow.close();
   });
 
+  ipcMain.handle('open-link', (_event, url: string) => {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      shell.openExternal(url);
+    }
+  });
+
   // State Persistence
   ipcMain.on('save-application-state', (event, state) => {
     store.set('applicationState', state);
