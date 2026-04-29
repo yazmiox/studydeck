@@ -12,6 +12,7 @@ const config: ForgeConfig = {
     asar: true,
     icon: 'src/icon',
     name: 'StudyDeck',
+    executableName: 'studydeck',
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({ setupIcon: 'src/icon.ico', }), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],

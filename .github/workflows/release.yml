@@ -1,8 +1,7 @@
 name: Build and Release
 
 on:
-  release:
-    types: [published] # Triggers when you click "Publish release" on GitHub
+  workflow_dispatch: # Adds a "Run workflow" button in the Actions tab
 
 jobs:
   build:
@@ -10,9 +9,13 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         # Build on Windows, Mac, and Ubuntu
         os: [windows-latest, macos-latest, ubuntu-latest]
+
+    permissions:
+      contents: write # Important: allows the workflow to upload binaries to releases
 
     steps:
       - name: Check out Git repository
