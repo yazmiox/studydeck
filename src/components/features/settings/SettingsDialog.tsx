@@ -14,6 +14,10 @@ interface SettingsDialogProps {
 export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
     const { state, dispatch } = useAppContext();
     const { confirm, ConfirmDialog } = useConfirm();
+    
+    // Check if the user is on a Mac to display correct keyboard shortcuts
+    const isMac = typeof window !== 'undefined' ? navigator.userAgent.toLowerCase().includes('mac') : false;
+    const ctrlKey = isMac ? 'Cmd ⌘' : 'Ctrl';
 
     const handleExport = async () => {
         const dataStr = JSON.stringify(state, null, 2);
@@ -108,15 +112,15 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                         <div className="space-y-2 text-sm">
                             <div className="flex justify-between items-center">
                                 <span className="text-muted-foreground">Global Search</span>
-                                <kbd className="px-2 py-1 bg-muted rounded font-mono text-xs border">Ctrl + K</kbd>
+                                <kbd className="px-2 py-1 bg-muted rounded font-mono text-xs border">{ctrlKey} + K</kbd>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-muted-foreground">New Course</span>
-                                <kbd className="px-2 py-1 bg-muted rounded font-mono text-xs border">Ctrl + N</kbd>
+                                <kbd className="px-2 py-1 bg-muted rounded font-mono text-xs border">{ctrlKey} + N</kbd>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-muted-foreground">New Lecture</span>
-                                <kbd className="px-2 py-1 bg-muted rounded font-mono text-xs border">Ctrl + L</kbd>
+                                <kbd className="px-2 py-1 bg-muted rounded font-mono text-xs border">{ctrlKey} + L</kbd>
                             </div>
                         </div>
                     </div>
