@@ -54,7 +54,10 @@ Just run the installer — no configuration needed. The app will auto-update in 
 Download the `.deb` (Debian/Ubuntu) or `.rpm` (Fedora/RHEL) package from [Releases](https://github.com/yazmiox/studydeck/releases).
 
 ### macOS
-Download the `.dmg` or `.zip` from [Releases](https://github.com/yazmiox/studydeck/releases) and drag the app into your Applications folder.
+Download the appropriate version for your Mac from [Releases](https://github.com/yazmiox/studydeck/releases) and drag the app into your Applications folder:
+
+*   **Apple Silicon (`-arm64`):** For newer Macs (M1, M2, M3, etc.)
+*   **Intel (`-x64`):** For older Intel-based Macs.
 
 > ⚠️ **Note for Mac Users:** Because this app is independently developed, it isn't notarized by Apple's $99/year developer program. When you try to open it the first time, macOS will show a scary warning saying the app is damaged or from an unidentified developer.
 > 

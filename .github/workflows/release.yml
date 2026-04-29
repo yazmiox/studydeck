@@ -11,11 +11,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Build on Windows, Mac, and Ubuntu
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            arch: x64
+          - os: ubuntu-latest
+            arch: x64
+          - os: macos-latest
+            arch: x64 # For Intel Macs
+          - os: macos-latest
+            arch: arm64 # For Apple Silicon (M1/M2/M3) Macs
 
     permissions:
-      contents: write # Important: allows the workflow to upload binaries to releases
+      contents: write
 
     steps:
       - name: Check out Git repository
@@ -26,7 +33,6 @@ jobs:
         with:
           node-version: 20
 
-      # Linux requires these dependencies to build .deb and .rpm packages
       - name: Install Linux dependencies
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -42,5 +48,4 @@ jobs:
       - name: Publish Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # This compiles the app and attaches the .exe, .dmg, and .deb to the release you just created
-        run: pnpm run publish
+        run: pnpm run publish -- --arch=${{ matrix.arch }}
