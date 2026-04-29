@@ -17,8 +17,8 @@ jobs:
             arch: x64
           - os: ubuntu-latest
             arch: x64
-          - os: macos-13
-            arch: x64 # macos-13 is the last Intel-based runner
+          - os: macos-latest
+            arch: x64 # Cross-compiles for Intel Macs on ARM runner
 
     permissions:
       contents: write
