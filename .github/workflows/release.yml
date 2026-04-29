@@ -4,8 +4,9 @@ on:
   workflow_dispatch: # Adds a "Run workflow" button in the Actions tab
 
 jobs:
+  # First wave: Windows, Linux, and Intel Mac build simultaneously
   build:
-    name: Build on ${{ matrix.os }}
+    name: Build on ${{ matrix.os }} (${{ matrix.arch }})
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -18,8 +19,6 @@ jobs:
             arch: x64
           - os: macos-latest
             arch: x64 # For Intel Macs
-          - os: macos-latest
-            arch: arm64 # For Apple Silicon (M1/M2/M3) Macs
 
     permissions:
       contents: write
@@ -49,3 +48,32 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm run publish -- --arch=${{ matrix.arch }}
+
+  # Second wave: Apple Silicon Mac waits for the first wave to finish
+  build-mac-arm:
+    name: Build on macOS (arm64)
+    needs: build # Waits for ALL first-wave jobs to complete
+    runs-on: macos-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Publish Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm run publish -- --arch=arm64
