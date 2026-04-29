@@ -41,6 +41,8 @@
 
 ## 🚀 Download
 
+📖 **First time here?** Check out the [User Guide](docs/USER_GUIDE.md) for a complete walkthrough of all features, shortcuts, and tips!
+
 ### Windows
 Download the latest **StudyDeck Setup.exe** from the [Releases page](https://github.com/yazmiox/studydeck/releases).
 
