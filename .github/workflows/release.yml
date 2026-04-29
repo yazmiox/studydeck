@@ -47,7 +47,7 @@ jobs:
       - name: Publish Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm run publish -- --arch=${{ matrix.arch }}
+        run: npx electron-forge publish --arch=${{ matrix.arch }}
 
   # Second wave: Apple Silicon Mac waits for the first wave to finish
   build-mac-arm:
@@ -76,4 +76,4 @@ jobs:
       - name: Publish Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm run publish -- --arch=arm64
+        run: npx electron-forge publish --arch=arm64
