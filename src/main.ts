@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell, Notification, autoUpdater } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import Store from 'electron-store';
@@ -24,6 +24,13 @@ if (app.isPackaged) {
   updateElectronApp({
     repo: 'yazmiox/studydeck',
     updateInterval: '5 minutes'
+  });
+
+  autoUpdater.on('update-available', () => {
+    new Notification({
+      title: 'StudyDeck Update Available',
+      body: 'A new version is downloading silently in the background. Please keep the app open for a few moments.',
+    }).show();
   });
 }
 
