@@ -171,7 +171,7 @@ export function LectureList({ course }: LectureListProps) {
                 onSave={handleSaveLecture}
                 initialName={editingLecture?.name}
             />
-            <ConfirmDialog />
+            {ConfirmDialog}
         </div>
     );
 }

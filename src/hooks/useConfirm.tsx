@@ -26,7 +26,7 @@ export function useConfirm() {
         handleClose();
     };
 
-    const ConfirmDialog = () => (
+    const ConfirmDialog = (
         <AlertDialog open={promise !== null} onOpenChange={(open) => !open && handleCancel()}>
             <AlertDialogContent>
                 <AlertDialogHeader>

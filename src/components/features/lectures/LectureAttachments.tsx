@@ -89,7 +89,7 @@ export function LectureAttachments({ courseId, lectureId, attachments }: Lecture
                     ))}
                 </div>
             )}
-            <ConfirmDialog />
+            {ConfirmDialog}
         </div>
     );
 }

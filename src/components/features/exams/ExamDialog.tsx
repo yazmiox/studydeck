@@ -31,7 +31,7 @@ export function ExamDialog({ open, onOpenChange, onSave, initialData }: ExamDial
             setName(initialData?.name || "");
             setDate(initialData?.date || "");
             setTime(initialData?.time || "");
-            setShowCountdown(initialData?.showCountdown || false);
+            setShowCountdown(initialData?.showCountdown || true);
             setCourseId(initialData?.courseId || (state.courses.length > 0 ? state.courses[0].id : ""));
         }
     }, [open, state.courses, initialData]);

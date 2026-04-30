@@ -123,7 +123,7 @@ export function LectureLinks({ courseId, lectureId, links }: LectureLinksProps) 
                     ))}
                 </div>
             )}
-            <ConfirmDialog />
+            {ConfirmDialog}
         </div>
     );
 }

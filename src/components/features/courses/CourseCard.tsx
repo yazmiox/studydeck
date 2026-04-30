@@ -100,7 +100,7 @@ export function CourseCard({ course, isSelected, onClick, onEdit }: CourseCardPr
                     {progress}%
                 </span>
             </div>
-            <ConfirmDialog />
+            {ConfirmDialog}
         </div>
     );
 }

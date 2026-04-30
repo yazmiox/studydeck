@@ -32,14 +32,14 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
 
     const stats = useMemo(() => {
         const totalLectures = courses.reduce((acc, c) => acc + c.lectures.length, 0);
-        const completedLectures = courses.reduce((acc, c) => 
+        const completedLectures = courses.reduce((acc, c) =>
             acc + c.lectures.filter(l => l.status === 'done').length, 0
         );
 
-        const allExams = courses.flatMap(c => 
+        const allExams = courses.flatMap(c =>
             c.exams.map(e => ({ ...e, courseName: c.name, courseCode: c.code }))
         );
-        
+
         // Ensure exams have a proper datetime string
         const examsWithDate = allExams.map(e => {
             const timeStr = e.time ? `${e.time}:00` : "23:59:59";
@@ -79,13 +79,14 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
     }
 
     // Timer calculation
-    let timerDisplay = { days: 0, hours: 0, seconds: 0 };
+    let timerDisplay = { days: 0, hours: 0, minutes: 0, seconds: 0 };
     let timerMessage = "";
     if (stats.nextExamWithCountdown) {
         const diffSeconds = Math.max(0, differenceInSeconds(stats.nextExamWithCountdown.fullDate, currentTime));
         timerDisplay = {
             days: Math.floor(diffSeconds / (3600 * 24)),
             hours: Math.floor((diffSeconds % (3600 * 24)) / 3600),
+            minutes: Math.floor((diffSeconds % 3600) / 60),
             seconds: diffSeconds % 60,
         };
 
@@ -128,7 +129,7 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
                     </div>
                 </div>
 
-                <DashboardCard 
+                <DashboardCard
                     title="Active Courses"
                     value={courses.length}
                     icon={<BookOpen className="w-5 h-5" />}
@@ -148,7 +149,19 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
                             <div className="flex justify-between items-end">
                                 <div>
                                     <h4 className="text-xl font-bold">{stats.nextExamWithCountdown.name}</h4>
-                                    <p className="text-sm font-medium text-primary">{stats.nextExamWithCountdown.courseCode}</p>
+                                    <div className="flex items-center gap-2.5 mt-1.5">
+                                        <Badge variant="outline" className="text-xs py-0.5 bg-primary/5 border-primary/20 text-primary">{stats.nextExamWithCountdown.courseCode}</Badge>
+                                        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-md border border-border/50">
+                                            <Calendar className="w-3.5 h-3.5" />
+                                            <span>{format(stats.nextExamWithCountdown.fullDate, 'EEEE, MMM d')}</span>
+                                        </div>
+                                        {stats.nextExamWithCountdown.time && (
+                                            <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-md border border-border/50">
+                                                <Clock className="w-3.5 h-3.5" />
+                                                <span>{format(stats.nextExamWithCountdown.fullDate, 'hh:mm a')}</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="flex gap-2 text-center">
                                     <div className="bg-muted px-3 py-2 rounded-md min-w-[60px]">
@@ -159,6 +172,11 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
                                     <div className="bg-muted px-3 py-2 rounded-md min-w-[60px]">
                                         <div className="text-2xl font-bold font-mono">{timerDisplay.hours.toString().padStart(2, '0')}</div>
                                         <div className="text-[10px] uppercase text-muted-foreground font-semibold">Hours</div>
+                                    </div>
+                                    <div className="text-2xl font-bold py-2 text-muted-foreground/50">:</div>
+                                    <div className="bg-muted px-3 py-2 rounded-md min-w-[60px]">
+                                        <div className="text-2xl font-bold font-mono">{timerDisplay.minutes.toString().padStart(2, '0')}</div>
+                                        <div className="text-[10px] uppercase text-muted-foreground font-semibold">Mins</div>
                                     </div>
                                     <div className="text-2xl font-bold py-2 text-muted-foreground/50">:</div>
                                     <div className="bg-muted px-3 py-2 rounded-md min-w-[60px] opacity-70">
@@ -192,7 +210,7 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
                             const completed = course.lectures.filter(l => l.status === 'done').length;
                             const total = course.lectures.length;
                             const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-                            
+
                             return (
                                 <div key={course.id} className="space-y-2">
                                     <div className="flex justify-between items-end">
@@ -233,32 +251,39 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
                                                 </Badge>
                                             )}
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <Badge variant="outline" className="text-[10px] py-0 shrink-0">{exam.courseCode}</Badge>
-                                            <p className="text-[11px] text-muted-foreground truncate">
-                                                {format(exam.fullDate, 'MMM d, yyyy')} {exam.time && `@ ${exam.time}`}
-                                            </p>
+                                        <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                                            <Badge variant="outline" className="text-[11px] py-0 shrink-0">{exam.courseCode}</Badge>
+                                            <div className="flex items-center gap-1 text-[11px] text-muted-foreground bg-muted/40 px-1.5 py-0.5 rounded-full border border-border/50">
+                                                <Calendar className="w-3 h-3" />
+                                                <span>{format(exam.fullDate, 'MMM d, yyyy')}</span>
+                                            </div>
+                                            {exam.time && (
+                                                <div className="flex items-center gap-1 text-[11px] text-muted-foreground bg-muted/40 px-1.5 py-0.5 rounded-full border border-border/50">
+                                                    <Clock className="w-3 h-3" />
+                                                    <span>{format(exam.fullDate, 'hh:mm a')}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <div className="text-right shrink-0">
-                                            <p className="text-[11px] font-bold text-primary">
+                                            <p className="text-[12px] font-bold text-primary">
                                                 {differenceInDays(exam.fullDate, new Date())}d left
                                             </p>
                                         </div>
                                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button 
-                                                variant="ghost" 
-                                                size="icon" 
-                                                className="h-7 w-7" 
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-7 w-7"
                                                 onClick={() => onEditExam(exam)}
                                             >
                                                 <Edit className="w-3.5 h-3.5" />
                                             </Button>
-                                            <Button 
-                                                variant="ghost" 
-                                                size="icon" 
-                                                className="h-7 w-7 text-destructive hover:bg-destructive/10" 
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-7 w-7 text-destructive hover:bg-destructive/10"
                                                 onClick={async () => {
                                                     if (await confirm(`Delete exam "${exam.name}"?`, "Delete Exam")) {
                                                         dispatch({ type: 'DELETE_EXAM', payload: { courseId: exam.courseId, examId: exam.id } });
@@ -279,7 +304,7 @@ export function Dashboard({ onAddCourse, onAddExam, onEditExam }: DashboardProps
                     </div>
                 </div>
             </div>
-            <ConfirmDialog />
+            {ConfirmDialog}
         </div>
     );
 }

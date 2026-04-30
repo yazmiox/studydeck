@@ -153,7 +153,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                     </div>
                 </div>
             </DialogContent>
-            <ConfirmDialog />
+            {ConfirmDialog}
         </Dialog>
     );
 }
